@@ -1,0 +1,9 @@
+/*.el-aside {
+	width: 20vh;
+}
+.el-main {
+	width: 80vh;
+}*/
+.el-table th {
+	text-align: center !important;
+}
