@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <div>
+    <el-scrollbar style="height: 100%">
 			<el-header>头部区域</el-header>
-			<el-container>
-				<el-aside>
-					<el-menu :router="true">
-						<el-menu-item index='blog'>博客列表</el-menu-item>
-						<el-menu-item index='user'>用户列表</el-menu-item>
-						<el-menu-item index='words'>留言列表</el-menu-item>
-					</el-menu>
-				</el-aside>
-				<router-view></router-view>
-			</el-container>
-		</div>
+				<el-container>
+					<el-aside>
+						<el-menu :router="true">
+							<el-menu-item index='blog'>博客列表</el-menu-item>
+							<el-menu-item index='user'>用户列表</el-menu-item>
+							<el-menu-item index='words'>留言列表</el-menu-item>
+						</el-menu>
+					</el-aside>
+					<router-view></router-view>
+				</el-container>
+		</el-scrollbar>
   </div>
 </template>
 
@@ -23,6 +23,9 @@ export default {
 </script>
 
 <style>
+	html {
+	 overflow-y: hidden;
+	}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -30,6 +33,7 @@ export default {
   /*text-align: center;*/
   color: #2c3e50;
   /*margin-top: 60px;*/
+ height: 100vh;
 }
 /*.el-header, .el-container, .el-aside, .el-main {
 	border: 1px dotted #ddd;
@@ -46,5 +50,8 @@ export default {
 }
 .el-aside {
 	height: 100%;
+}
+.el-scrollbar__wrap {
+	overflow-x: hidden;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div id='blog-wrap'>
 		<el-main>
 			<h2>博客列表</h2>
 			<el-table 
@@ -19,7 +19,13 @@
 					fixed
 					></el-table-column>
 				<el-table-column  center=true prop="title" label='标题' width="300"></el-table-column>
-				<el-table-column prop="clickNumber" label='点击数' width="100"></el-table-column>
+				<el-table-column prop="clickNumber" label='点击数' width="100">
+					<template slot-scope="scope">
+						<el-input 
+							v-model="scope.row.clickNumber"
+							type="number"></el-input>
+					</template>
+				</el-table-column>
 				<el-table-column prop="up" label='置顶' width="180">
 					<template slot-scope="scope">
 						<el-radio-group size="mini" v-model="scope.row.up">
@@ -57,7 +63,7 @@
 				<el-table-column prop="date" label='日期' width="240">
 					<template slot-scope="scope">
 						<el-date-picker 
-							type="date" 
+							type="datetime" 
 							v-model="scope.row.time"
 							placeholder="选择日期"
 							align="center"></el-date-picker>
@@ -71,7 +77,7 @@
 						<el-button size="mini" @click="changeBlogInfo(scope.row)">
 							保存
 						</el-button>
-						<el-button type="danger" size="mini">
+						<el-button type="danger" size="mini" @click="deleteBlog(scope.row)">
 							删除
 						</el-button>
 					</template>
@@ -96,7 +102,7 @@
 				<el-table-column prop="time" label='日期' width="240">
 					<template slot-scope="scope">
 						<el-date-picker 
-							type="date" 
+							type="datetime" 
 							v-model="scope.row.time"
 							placeholder="选择日期"
 							align="center"></el-date-picker>
@@ -146,13 +152,6 @@
 			}
 		},
 		methods: {
-			handleTime (time) {
-				const date = new Date(time)
-				return date.getFullYear() + '年' + this.add0(date.getMonth() + 1) + '月' + this.add0(date.getDate()) + '日'
-			},
-			add0 (num) {
-				return num < 10 ? '0' + num : num + ''
-			},
 			getBlogData () {
 				this.blogLoading = true
 				const url = '/bloglist?page=' + this.blogs.page + '&pageCount=' + this.blogs.pageCount
@@ -194,10 +193,46 @@
 			},
 			changeBlogInfo (blog) {
 				const url = '/editblog?id=' + blog.id
+				blog.time = new Date(blog.time).getTime()
+				blog.clickNumber = Number.parseFloat(blog.clickNumber)
+				if (blog.clickNumber !== blog.clickNumber) {
+					blog.clickNumber = 0
+				}
 				this.ajax.post(url, JSON.stringify(blog)).then(d => {
-					console.log(d)
+					this.$message({
+						type: 'success',
+						message: '已保存'
+					})
 				}).catch(err => {
-					console.log(err)
+					this.$message.error('删除失败')
+				})
+			},
+			deleteBlog ({id}) {
+				this.$confirm('删除博客后将不可找回，是否确认删除？', '提示', {
+					confirmButtonText: '确定',
+					concelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					const loading = this.$loading({
+						lock: true,
+						text: '正在删除...',
+						spinner: 'el-icon-loading',
+						background: 'rgba(0, 0, 0, .7)'
+					})
+					this.ajax.get('/deleteblog?id=' + id).then(d => {
+						loading.close()
+						this.$message({
+							type: 'success',
+							message: '删除成功'
+						})
+						this.getBlogData()
+					}).catch(err => {
+						loading.close()
+						this.$message.error('删除失败')
+						console.log(err)
+					})
+				}).catch(() => {
+					this.$message('取消删除')
 				})
 			}
 		},

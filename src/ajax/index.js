@@ -13,10 +13,10 @@ class Ajax {
 			})
 		})
 	}
-	'post' (addr, data) {
+	'post' (addr, data, params) {
 		const url = this.url + addr
 		return new Promise((resolve, reject) => {
-			axios.post(url, data).then(d => {
+			axios.post(url, data, params).then(d => {
 				resolve(d)
 			}).catch(err => {
 				reject(err)
