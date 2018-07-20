@@ -45,8 +45,8 @@
 				<el-table-column prop="type" label='权限' width="240">
 					<template slot-scope="scope">
 						<el-radio-group size="mini" v-model="scope.row.type">
-							<el-radio-button :label='0'>公开</el-radio-button>
-							<el-radio-button :label='1'>私有</el-radio-button>
+							<el-radio-button :label='0'>私有</el-radio-button>
+							<el-radio-button :label='1'>公开</el-radio-button>
 							<el-radio-button :label='2'>好友</el-radio-button>
 						</el-radio-group>
 					</template>
@@ -112,7 +112,7 @@
 					label='操作' 
 					width="180">
 					<template slot-scope="scope">
-						<el-button type="danger" size="mini">
+						<el-button type="danger" size="mini" @click="deleteComment(scope.row)">
 							删除
 						</el-button>
 					</template>
@@ -226,6 +226,34 @@
 							message: '删除成功'
 						})
 						this.getBlogData()
+					}).catch(err => {
+						loading.close()
+						this.$message.error('删除失败')
+						console.log(err)
+					})
+				}).catch(() => {
+					this.$message('取消删除')
+				})
+			},
+			deleteComment ({id}) {
+				this.$confirm('删除评论后将不可找回，是否确认删除？', '提示', {
+					confirmButtonText: '确定',
+					concelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					const loading = this.$loading({
+						lock: true,
+						text: '正在删除...',
+						spinner: 'el-icon-loading',
+						background: 'rgba(0, 0, 0, .7)'
+					})
+					this.ajax.get('/deletecomment?id=' + id).then(d => {
+						loading.close()
+						this.$message({
+							type: 'success',
+							message: '删除成功'
+						})
+						this.getBlogComment()
 					}).catch(err => {
 						loading.close()
 						this.$message.error('删除失败')

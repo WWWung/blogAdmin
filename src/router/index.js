@@ -5,6 +5,7 @@ import Router from 'vue-router'
 
 import Blog from '@/views/blog'
 import User from '@/views/user'
+import Words from '@/views/words'
 
 Vue.use(Router)
 
@@ -25,6 +26,11 @@ export default new Router({
   		path: '/user',
   		name: 'User',
   		component: User
+  	},
+   	{
+  		path: '/words',
+  		name: 'Words',
+  		component: Words
   	}
   ]
 })

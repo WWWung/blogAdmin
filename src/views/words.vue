@@ -3,15 +3,15 @@
 		<el-main>
 			<el-table 
 				stripe
-				:data="users.data"
-				v-loading="usersLoading">
-				<el-table-column prop="id" label='用户ID' width="100"></el-table-column>
-				<el-table-column prop="name" label='用户名' width="380"></el-table-column>
-				<el-table-column prop="description" label='简介' width="180"></el-table-column>
-				<el-table-column prop="birthday" label='生日' width="240">
+				:data="words.data"
+				v-loading="wordsLoading">
+				<el-table-column prop="id" label='留言ID' width="100"></el-table-column>
+				<el-table-column prop="content" label='内容' width="380"></el-table-column>
+				<el-table-column prop="username" label='作者' width="180"></el-table-column>
+				<el-table-column prop="time" label='日期' width="240">
 					<template slot-scope="scope">
 						<el-date-picker 
-							type="date" 
+							type="datetime" 
 							v-model="scope.row.time"
 							placeholder="选择日期"
 							align="center"></el-date-picker>
@@ -21,7 +21,7 @@
 					label='操作' 
 					width="180">
 					<template slot-scope="scope">
-						<el-button type="danger" size="mini" @click="deleteUser(scope.row)">
+						<el-button type="danger" size="mini" @click="deleteWords(scope.row)">
 							删除
 						</el-button>
 					</template>
@@ -30,11 +30,11 @@
 			<el-pagination 
 					align="center"
 					backround
-					:page-size="users.pageCount"
+					:page-size="words.pageCount"
 					layout="prev, pager, next"
-					:total="users.total"
-					:current-page="users.page"
-					@current-change='usersTablePageChange'></el-pagination>
+					:total="words.total"
+					:current-page="words.page"
+					@current-change='wordsTablePageChange'></el-pagination>
 		</el-main>
 	</div>
 </template>
@@ -43,33 +43,33 @@
 	export default {
 		data () {
 			return {
-				users: {
+				words: {
 					data: [],
 					total: 0,
 					page: 1,
 					pageCount: 10
 				},
-				usersLoading: false
+				wordsLoading: false
 			}
 		},
 		methods: {
 			getWordData () {
-				this.usersLoading = true
-				const url = '/userslist?page=' + this.users.page + '&pageCount=' + this.users.pageCount
+				this.wordsLoading = true
+				const url = '/wordslist?page=' + this.words.page + '&pageCount=' + this.words.pageCount
 				this.ajax.get(url).then(d => {
-					this.users = d.data
-					this.usersLoading = false
+					this.words = d.data
+					this.wordsLoading = false
 				}).catch(err => {
 					console.log(err)
-					this.usersLoading = false
+					this.wordsLoading = false
 				})
 			},
-			usersTablePageChange (val) {
+			wordsTablePageChange (val) {
 				this.words.page = val
 				this.getWordData()
 			},
-			deleteUser ({id}) {
-				this.$confirm('删除账号后将不可找回，是否确认删除？', '提示', {
+			deleteWords ({id}) {
+				this.$confirm('删除留言后将不可找回，是否确认删除？', '提示', {
 					confirmButtonText: '确定',
 					concelButtonText: '取消',
 					type: 'warning'
@@ -80,7 +80,7 @@
 						spinner: 'el-icon-loading',
 						background: 'rgba(0, 0, 0, .7)'
 					})
-					this.ajax.get('/deleteuser?id=' + id).then(d => {
+					this.ajax.get('/deletewords?id=' + id).then(d => {
 						loading.close()
 						this.$message({
 							type: 'success',
